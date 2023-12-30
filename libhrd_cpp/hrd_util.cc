@@ -243,12 +243,13 @@ int hrd_free(int shm_key, void* shm_buf) {
 // Like printf, but red. Limited to 1000 characters.
 void hrd_red_printf(const char* format, ...) {
 #define RED_LIM 1000
+#define RED_CTL_LEN 9
   va_list args;
   int i;
 
-  char buf1[RED_LIM], buf2[RED_LIM];
+  char buf1[RED_LIM], buf2[RED_LIM + RED_CTL_LEN];
   memset(buf1, 0, RED_LIM);
-  memset(buf2, 0, RED_LIM);
+  memset(buf2, 0, RED_LIM + RED_CTL_LEN);
 
   va_start(args, format);
 
@@ -261,10 +262,10 @@ void hrd_red_printf(const char* format, ...) {
   }
 
   // Add markers for red color and reset color
-  snprintf(buf2, 1000, "\033[31m%s\033[0m", buf1);
+  snprintf(buf2, RED_LIM + RED_CTL_LEN, "\033[31m%s\033[0m", buf1);
 
   // Probably another bad check for buffer overflow
-  for (i = RED_LIM - 1; i >= RED_LIM - 50; i--) {
+  for (i = RED_LIM + RED_CTL_LEN - 1; i >= RED_LIM + RED_CTL_LEN - 50; i--) {
     assert(buf2[i] == 0);
   }
 
